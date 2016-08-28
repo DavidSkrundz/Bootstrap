@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+# Define colors
+CYAN="\033[0;36m"
+GREEN="\033[0;32m"
+YELLOW="\033[0;33m"
+END="\033[m"
+
+TMP_INSTALL=".install.tmp"
+
+# Execute a copy of the script in case updating it would cause side-effects
+if [ $# == 0 ]; then
+	echo -e $YELLOW"Bootstrapping..."$END
+
+	SELF_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+	cd $SELF_DIRECTORY
+
+	cp $0 ./$TMP_INSTALL
+
+	exec ./$TMP_INSTALL --bootstrapped
+fi
+
+# Perform cleanup
+if [ $1 == "--cleanup" ]; then
+	rm -f ./$TMP_INSTALL
+
+	exit 0
+fi
+
+echo -e $GREEN"Bootstrapped!"$END
+
+if [ $1 != "--no-update" ]; then
+	echo -e $GREEN"Updating Bootstrap..."$END
+	git remote update
+
+	# Compare the working directory to the repo
+	LOCAL=$(git rev-parse @)
+	REMOTE=$(git rev-parse @{u})
+
+	if [ $LOCAL = $REMOTE ]; then
+		echo -e "Up-to-date"
+	else
+		# Force clean the repo and update
+		git clean -fxd --exclude=/$TMP_INSTALL
+		git reset --hard origin/master
+		echo -e $GREEN"Updated..."$END
+
+		# Run the new version of install
+		echo -e $YELLOW"Relaunching..."$END
+		exec ./install
+	fi
+
+	echo -e $GREEN"Updating Dependencies..."$END
+	swift package update
+fi
+
+echo -e $GREEN"Building Bootstrap..."$END
+swift build
+
+echo -e $GREEN"Copying Executables..."$END
+mkdir -p bin
+cp -f .build/debug/Bootstrap ./bin/bootstrap
+cp -f .build/debug/Build ./build
+
+echo -e $GREEN"Creating Additional Directories..."$END
+mkdir -p ../Modules/
+
+echo -e ""
+echo -e $CYAN"ADD THE FOLLOWING TO YOUR BASH PROFILE:"$END
+echo -e "export BOOTSTRAP_PATH=\"$(pwd)/bin\""
+echo -e "export PATH=\"\${BOOTSTRAP_PATH}\":\"\${PATH}\""
+
+exec ./install --cleanup

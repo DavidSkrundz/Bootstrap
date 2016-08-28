@@ -1,0 +1,5 @@
+#!/usr/bin/env bootstrap
+
+import UUID
+
+print(UUID(version: .v4))
