@@ -3,6 +3,7 @@
 //  Bootstrap
 //
 
+import CommandLine
 import Foundation
 import LibC
 import UnicodeOperators
@@ -28,8 +29,13 @@ private func main(_ path: String, _ arguments: [String]) {
 	try! Directory.ChangeDirectory(to: path)
 	
 	build(arguments.last!, flags)
+	fixPermissions()
 	
 	try! Directory.ChangeDirectory(to: currentDirectory)
+}
+
+private func fixPermissions() {
+	"chmod -R 755 ../../Modules/" > StandardOut
 }
 
 // Disable output buffering, otherwise when bootstrap runs build, nothing will
