@@ -6,10 +6,8 @@
 import CommandLine
 import Foundation
 import LibC
-import UnicodeOperators
-import Util
 
-internal let PathSeparator = "/"
+internal let pathSeparator = "/"
 
 private func main(_ path: String, _ arguments: [String]) {
 	guard arguments.count == 1 || arguments.count == 2 else {
@@ -17,36 +15,41 @@ private func main(_ path: String, _ arguments: [String]) {
 		return
 	}
 	
-	let flags = arguments.dropLast().toArray()
+	let flags = Array(arguments.dropLast())
 	for flag in flags {
-		if flag ≠ "-u" && flag ≠ "--update" {
+		if flag != "-u" && flag != "--update" {
 			usage()
 			return
 		}
 	}
 	
-	let currentDirectory = Directory.CurrentDirectory()
-	try! Directory.ChangeDirectory(to: path)
+	let currentDirectory = Directory.current()
+	try! Directory.change(to: path)
 	
 	build(arguments.last!, flags)
 	fixPermissions()
 	
-	try! Directory.ChangeDirectory(to: currentDirectory)
+	try! Directory.change(to: currentDirectory)
 }
 
 private func fixPermissions() {
-	"chmod -R 755 ../../Modules/" > StandardOut
+	"chmod -R 755 ../../Modules/" > standardOut
 }
 
-// Disable output buffering, otherwise when bootstrap runs build, nothing will
-// print until build has completed
-#if os(macOS)
-	setvbuf(__stdoutp, nil, _IOLBF, 0)
-#endif
+private func disablePrintBuffering() {
+	// Without this nothing would get printed until the builds are done
+	
+	#if os(macOS)
+		setvbuf(__stdoutp, nil, _IOLBF, 0)
+	#endif
+	
+	#if os(Linux)
+		setvbuf(stdout, nil, _IOLBF, 0)
+	#endif
+}
 
-#if os(Linux)
-	setvbuf(stdout, nil, _IOLBF, 0)
-#endif
+
+disablePrintBuffering()
 
 let process = ProcessInfo.processInfo
 let environment = process.environment
@@ -55,6 +58,6 @@ let arguments = process.arguments
 guard let bootstrapPath = environment["BOOTSTRAP_PATH"] else {
 	fatalError("Environment variable BOOTSTRAP_PATH not set")
 }
-let actualArguments = arguments.dropFirst().toArray()
+let actualArguments = Array(arguments.dropFirst())
 
 main(bootstrapPath, actualArguments)

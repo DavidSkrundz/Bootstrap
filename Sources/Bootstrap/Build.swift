@@ -6,6 +6,6 @@
 import CommandLine
 
 internal func build(_ bootstrapDirectory: String, _ flags: [String]) {
-	let task = AutoTask(bootstrapDirectory + "/build", arguments: flags)
-	task > StandardOut
+	let task = AutoTask(cmd: bootstrapDirectory + "/build", args: flags)
+	task > standardOut
 }

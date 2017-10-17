@@ -5,21 +5,19 @@
 
 import Foundation
 import LibC
-import UnicodeOperators
-import Util
 
-internal let PathSeparator = "/"
+internal let pathSeparator = "/"
 
 private func main(_ path: String, _ arguments: [String]) {
 	let bootstrapDirectory = path
-		.components(separatedBy: PathSeparator)
+		.components(separatedBy: pathSeparator)
 		.dropLast(1)
-		.joined(separator: PathSeparator)
+		.joined(separator: pathSeparator)
 	
-	if arguments.count ≥ 1 && arguments[0].hasPrefix("-") {
+	if arguments.count >= 1 && arguments[0].hasPrefix("-") {
 		runMode(bootstrapDirectory,
 		        arguments[0],
-		        arguments.dropFirst().toArray())
+		        Array(arguments.dropFirst()))
 	} else if arguments.count == 1 {
 		run(bootstrapDirectory, arguments[0])
 	} else {
@@ -45,6 +43,6 @@ let arguments = process.arguments
 guard let bootstrapPath = environment["BOOTSTRAP_PATH"] else {
 	fatalError("Environment variable BOOTSTRAP_PATH not set")
 }
-let actualArguments = arguments.dropFirst().toArray()
+let actualArguments = Array(arguments.dropFirst())
 	
 main(bootstrapPath, actualArguments)

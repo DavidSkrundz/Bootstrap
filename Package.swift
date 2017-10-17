@@ -1,3 +1,4 @@
+// swift-tools-version:4.0
 //
 //  Package.swift
 //  Bootstrap
@@ -7,14 +8,20 @@ import PackageDescription
 
 let package = Package(
 	name: "Bootstrap",
-	targets: [
-		Target(name: "Bootstrap", dependencies: []),
-		Target(name: "Build", dependencies: []),
-	],
 	dependencies: [
-		.Package(url: "https://github.com/DavidSkrundz/CommandLine.git", majorVersion: 1, minor: 1),
-		.Package(url: "https://github.com/DavidSkrundz/LibC.git", majorVersion: 1, minor: 0),
-		.Package(url: "https://github.com/DavidSkrundz/UnicodeOperators.git", majorVersion: 1, minor: 0),
-		.Package(url: "https://github.com/DavidSkrundz/Util.git", majorVersion: 1, minor: 0),
+		.package(url: "https://github.com/DavidSkrundz/Collections.git",
+		         .upToNextMinor(from: "1.0.0")),
+		.package(url: "https://github.com/DavidSkrundz/CommandLine.git",
+		         .upToNextMinor(from: "1.3.0")),
+		.package(url: "https://github.com/DavidSkrundz/LibC.git",
+		         .upToNextMinor(from: "1.1.0"))
+	],
+	targets: [
+		.target(
+			name: "Bootstrap",
+			dependencies: ["CommandLine", "LibC"]),
+		.target(
+			name: "Build",
+			dependencies: ["CommandLine", "LibC"])
 	]
 )

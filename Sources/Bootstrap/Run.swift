@@ -13,8 +13,8 @@ internal func run(_ bootstrapPath: String, _ argument: String) {
 	arguments += moduleArguments(bootstrapPath)
 	arguments += [argument]
 	
-	let task = AutoTask("swift", arguments: arguments)
-	task > StandardOut
+	let task = AutoTask(cmd: "swift", args: arguments)
+	task > standardOut
 }
 
 private func platformArguments() -> [String] {
@@ -41,22 +41,22 @@ private func moduleArguments(_ bootstrapPath: String) -> [String] {
 	return listedModules
 		.components(separatedBy: "\n")
 		.dropLast()
-		.map { modulesPath + PathSeparator + $0 }
+		.map { modulesPath + pathSeparator + $0 }
 		.flatMap(moduleArgument)
 }
 
 private func moduleArgument(_ modulePath: String) -> [String] {
-	let currentDirectory = Directory.CurrentDirectory()
+	let currentDirectory = Directory.current()
 	do {
-		try Directory.ChangeDirectory(to: modulePath)
+		try Directory.change(to: modulePath)
 	} catch let error {
 		print("Could not find module at \(modulePath) - \(error)")
 		return []
 	}
-	defer { try! Directory.ChangeDirectory(to: currentDirectory) }
+	defer { try! Directory.change(to: currentDirectory) }
 	
 	var files = ""
-	"ls -1" > files
+	AutoTask("ls -1") > files
 	
 	if files.contains("module.modulemap") {
 		return [
@@ -65,7 +65,7 @@ private func moduleArgument(_ modulePath: String) -> [String] {
 	} else {
 		let importDirectoryFlag = "-I" + modulePath + "/.build/release"
 		let linkDirectoryFlag = "-L" + modulePath + "/.build/release"
-		let module = modulePath.components(separatedBy: PathSeparator).last
+		let module = modulePath.components(separatedBy: pathSeparator).last
 		let linkFlag = "-l" + (module ?? "")
 		return [
 			importDirectoryFlag,
