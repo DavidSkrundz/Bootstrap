@@ -9,8 +9,6 @@ import PackageDescription
 let package = Package(
 	name: "Bootstrap",
 	dependencies: [
-		.package(url: "https://github.com/DavidSkrundz/Collections.git",
-		         .upToNextMinor(from: "1.0.0")),
 		.package(url: "https://github.com/DavidSkrundz/CommandLine.git",
 		         .upToNextMinor(from: "1.3.0")),
 		.package(url: "https://github.com/DavidSkrundz/LibC.git",

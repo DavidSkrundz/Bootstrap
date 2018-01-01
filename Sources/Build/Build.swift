@@ -9,16 +9,7 @@ import LibC
 private let Reset = ANSI.Text.Color.Default
 private let Green = ANSI.Text.Color.Green
 
-internal func build(_ argument: String, _ flags: [String]) {
-	switch argument {
-		case "--all":
-			buildAll(flags: flags)
-		default:
-			build(module: argument, flags: flags)
-	}
-}
-
-internal func buildAll(flags: [String]) {
+internal func buildAll(shouldUpdate: Bool) {
 	var listedModules = ""
 	AutoTask("ls -1 ../../Modules/") > listedModules
 	
@@ -27,11 +18,11 @@ internal func buildAll(flags: [String]) {
 		.dropLast()
 	
 	for module in modules {
-		build(module: module, flags: flags)
+		build(module: module, shouldUpdate: shouldUpdate)
 	}
 }
 
-internal func build(module: String, flags: [String]) {
+internal func build(module: String, shouldUpdate: Bool) {
 	let currentDirectory = Directory.current()
 	do {
 		try Directory.change(to: "../../Modules/\(module)")
@@ -40,7 +31,7 @@ internal func build(module: String, flags: [String]) {
 		return
 	}
 	
-	if flags.count > 0 && (flags.contains("-u") || flags.contains("--update")) {
+	if shouldUpdate {
 		print(Green + "Updating \(module)..." + Reset)
 		update()
 	}

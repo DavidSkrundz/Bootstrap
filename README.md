@@ -15,8 +15,6 @@ cd Bootstrap
 ./install
 ```
 
-`alias Bootstrap="/path/to/Bootstrap/Bootstrap"`
-
 ## Getting Packages
 
 ```

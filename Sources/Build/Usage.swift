@@ -3,16 +3,14 @@
 //  Bootstrap
 //
 
-internal func usage() {
+import CommandLine
+import Foundation
+
+internal func usage(_ parser: ArgumentParser) -> Never {
 	print("OVERVIEW: Update and Build all modules in the Modules directory")
 	print("")
-	print("USAGE: build <flags> <command>")
+	print("USAGE: build <options> [module...]")
 	print("")
-	print("FLAGS:")
-	print("  -u, --update   Fetches the latest commit from origin/master")
-	print("                 before building the module")
-	print("")
-	print("COMMANDS:")
-	print("  <module>   Update and Build a single module")
-	print("  --all      Update and Build all modules")
+	print(parser.usage())
+	exit(0)
 }
