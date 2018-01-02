@@ -76,7 +76,7 @@ guard let bootstrapPath = environment["BOOTSTRAP_PATH"] else {
 	exit(-1)
 }
 do {
-	try main("bootstrapPath")
+	try main(bootstrapPath)
 } catch let error as ParseError {
 	print(error.description)
 } catch let e {

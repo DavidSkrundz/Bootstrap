@@ -55,7 +55,7 @@ if [ $1 != "--no-update" ]; then
 fi
 
 echo -e $GREEN"Building Bootstrap..."$END
-swift build
+swift build --configuration release
 
 echo -e $GREEN"Copying Executables..."$END
 mkdir -p bin

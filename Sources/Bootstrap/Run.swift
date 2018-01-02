@@ -39,7 +39,7 @@ private func moduleArguments(_ bootstrapPath: String) -> [String] {
 	] > listedModules
 	
 	return listedModules
-		.components(separatedBy: "\n")
+		.components(separatedBy: .newlines)
 		.dropLast()
 		.map { modulesPath + pathSeparator + $0 }
 		.flatMap(moduleArgument)
@@ -58,19 +58,28 @@ private func moduleArgument(_ modulePath: String) -> [String] {
 	var files = ""
 	AutoTask("ls -1") > files
 	
-	if files.contains("module.modulemap") {
-		return [
-			"-I" + modulePath,
-		]
-	} else {
+	let modulesMaps = moduleMaps(modulePath)
+	if !files.contains("module.modulemap") {
 		let importDirectoryFlag = "-I" + modulePath + "/.build/release"
 		let linkDirectoryFlag = "-L" + modulePath + "/.build/release"
-		let module = modulePath.components(separatedBy: pathSeparator).last
-		let linkFlag = "-l" + (module ?? "")
+		let module = modulePath.components(separatedBy: pathSeparator).last!
+		let linkFlag = "-l" + module
 		return [
 			importDirectoryFlag,
 			linkDirectoryFlag,
-			linkFlag,
-		]
+			linkFlag
+		] + modulesMaps
 	}
+	return modulesMaps
+}
+
+private func moduleMaps(_ modulePath: String) -> [String] {
+	var paths = ""
+	AutoTask("find ./Sources -name *.modulemap")
+		| AutoTask(cmd: "sed", args: "s/\\.//")
+		|  AutoTask(cmd: "sed", args: "s/\\/[^/]*$/\\//") > paths
+	return paths
+		.components(separatedBy: .newlines)
+		.dropLast()
+		.map { "-I\(modulePath)\($0)" }
 }
