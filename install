@@ -59,8 +59,9 @@ swift build
 
 echo -e $GREEN"Copying Executables..."$END
 mkdir -p bin
-cp -f .build/debug/Bootstrap ./bin/bootstrap
-cp -f .build/debug/Build ./build
+cp -f .build/release/Bootstrap ./bin/bootstrap
+cp -f .build/release/Build ./bin/build
+cp -f .build/release/*.so bin/
 
 echo -e $GREEN"Creating Additional Directories..."$END
 mkdir -p ../Modules/
