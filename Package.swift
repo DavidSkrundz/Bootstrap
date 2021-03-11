@@ -1,4 +1,4 @@
-// swift-tools-version:4.0
+// swift-tools-version:5.0
 //
 //  Package.swift
 //  Bootstrap
@@ -10,9 +10,9 @@ let package = Package(
 	name: "Bootstrap",
 	dependencies: [
 		.package(url: "https://github.com/DavidSkrundz/CommandLine.git",
-		         .upToNextMinor(from: "1.3.0")),
+		         .upToNextMinor(from: "2.0.0")),
 		.package(url: "https://github.com/DavidSkrundz/LibC.git",
-		         .upToNextMinor(from: "1.1.0"))
+		         .upToNextMinor(from: "2.0.0"))
 	],
 	targets: [
 		.target(
